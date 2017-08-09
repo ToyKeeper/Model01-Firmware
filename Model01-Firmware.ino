@@ -8,11 +8,15 @@
 #define BUILD_INFORMATION "locally built"
 #endif
 
+// comment this out to disable oneshot
+#define USE_ONESHOT
+
 
 #include "Kaleidoscope-MouseKeys.h"
+#include "MouseWrapper.h"
 #include "Kaleidoscope-Macros.h"
 #include "Kaleidoscope-LEDControl.h"
-#include "Kaleidoscope-Numlock.h"
+//#include "Kaleidoscope-Numlock.h"
 #include "Kaleidoscope.h"
 
 #include "LED-Off.h"
@@ -21,14 +25,21 @@
 #include "Kaleidoscope-LEDEffect-Chase.h"
 #include "Kaleidoscope-LEDEffect-Rainbow.h"
 #include "Kaleidoscope-LED-Stalker.h"
-#include "Kaleidoscope-LED-AlphaSquare.h"
-#include "Kaleidoscope-Model01-TestMode.h"
+#include "Kaleidoscope-LED-Wavepool.h"
+//#include "Kaleidoscope-LED-AlphaSquare.h"
+//#include "Kaleidoscope-Model01-TestMode.h"
+
+#include "kaleidoscope/hid.h"
+#ifdef USE_ONESHOT
+#include "Kaleidoscope-OneShot.h"
+#include "Kaleidoscope-LED-ActiveModColor.h"
+#endif
 
 #define MACRO_VERSION_INFO 1
 #define Macro_VersionInfo M(MACRO_VERSION_INFO)
 #define MACRO_ANY 2
 #define Macro_Any M(MACRO_ANY)
-#define NUMPAD_KEYMAP 2
+//#define NUMPAD_KEYMAP 2
 
 /*
 #define GENERIC_FN2  KEYMAP_STACKED ( \
@@ -49,23 +60,23 @@ ___ \
 */
 
 #define GENERIC_FN2  KEYMAP_STACKED ( \
-Key_Backtick, Key_F1,    Key_F2,            Key_F3,       Key_F4,            Key_F5,           XXX,         \
-Key_Tab,      ___,       Key_mouseScrollUp, Key_mouseUp,  Key_mouseScrollDn, ___,              ___, \
+Key_Backslash,Key_F1,    Key_F2,            Key_F3,       Key_F4,            Key_F5,           XXX,         \
+Key_Tab,      ___,       Key_mouseScrollUp, Key_mouseUp,  Key_mouseScrollDn, ___,              Key_Minus,   \
 Key_Home,     ___,       Key_mouseL,        Key_mouseDn,  Key_mouseR,        ___,                   \
 Key_End,      ___,       Key_mouseBtnL,     Key_mouseBtnM,Key_mouseBtnR,     ___,              ___, \
-                                            Key_LeftControl, Key_Delete, Key_LeftShift, Key_LeftGui,  \
+                                            ___, Key_Delete, ___, ___,  \
                                                                 ___,   \
 \
 ___,            Key_F6,                 Key_F7,                   Key_F8,                  Key_F9,          Key_F10,          Key_F11, \
-___,            ___,                    ___,                      Key_UpArrow,             ___,             ___,              Key_RightBracket, \
+Key_Equals,     ___,                    ___,                      Key_UpArrow,             ___,             ___,              Key_RightBracket, \
                 ___,                    Key_LeftArrow,            Key_DownArrow,           Key_RightArrow,  ___,              Key_Enter, \
-Key_Menu,       ___,                    ___,                      ___,                     ___,             Key_Backslash,    Key_Pipe, \
-Key_RightAlt, Key_RightShift, Key_Enter, Key_RightControl, \
+Key_Menu,       ___,                    ___,                      ___,                     ___,             ___,              ___, \
+___, ___, Key_Enter, ___, \
 ___ \
 )
 
 
-
+/*
 #define NUMPAD KEYMAP_STACKED  (\
     ___, ___, ___, ___, ___, ___, ___,  \
     ___, ___, ___, ___, ___, ___, ___,  \
@@ -82,6 +93,7 @@ ___ \
     ___, ___, ___, ___, \
     Key_Keymap1_Momentary \
 )
+*/
 
 /*
 #define QWERTY KEYMAP_STACKED ( \
@@ -101,26 +113,44 @@ ___ \
 )
 */
 
+#ifdef USE_ONESHOT
+#define My_LeftCtrl OSM(LeftControl)
+#define My_RightCtrl OSM(RightControl)
+#define My_LeftShift OSM(LeftShift)
+#define My_RightShift OSM(RightShift)
+#define My_LeftAlt OSM(LeftAlt)
+#define My_LeftGui OSM(LeftGui)
+#define My_Fn OSL(1)
+#else
+#define My_LeftCtrl Key_LeftControl
+#define My_RightCtrl Key_RightControl
+#define My_LeftShift Key_LeftShift
+#define My_RightShift Key_RightShift
+#define My_LeftAlt Key_LeftAlt
+#define My_LeftGui Key_LeftGui
+#define My_Fn Key_Keymap1_Momentary
+#endif
+
 #define TK_QWERTY KEYMAP_STACKED ( \
     Key_Escape,   Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext, \
-    Key_Tab,      Key_Q, Key_W, Key_E, Key_R, Key_T, ___,               \
+    Key_Tab,      Key_Q, Key_W, Key_E, Key_R, Key_T, Key_LeftParen,     \
     Key_PageUp,   Key_A, Key_S, Key_D, Key_F, Key_G,                    \
     Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Insert,        \
-    Key_LeftControl, Key_Backspace, Key_LeftShift, Key_LeftGui,         \
-                          Key_Keymap1_Momentary,     \
+    My_LeftCtrl, Key_Backspace, My_LeftShift, My_LeftGui,         \
+    My_Fn, \
 \
-    Macro_Any,     Key_6, Key_7, Key_8,     Key_9,      Key_0,         Key_ToggleNumlock, \
-    ___,           Key_Y, Key_U, Key_I,     Key_O,      Key_P,         Key_LeftBracket,   \
+    Macro_Any,     Key_6, Key_7, Key_8,     Key_9,      Key_0,         Key_Backtick,      \
+    Key_RightParen,Key_Y, Key_U, Key_I,     Key_O,      Key_P,         Key_LeftBracket,   \
                    Key_H, Key_J, Key_K,     Key_L,      Key_Semicolon, Key_Quote,         \
     Key_Minus,     Key_N, Key_M, Key_Comma, Key_Period, Key_Slash,     Key_Equals,        \
-    Key_LeftAlt,   Key_RightShift, Key_Spacebar, Key_RightControl,                   \
-    Key_Keymap1_Momentary \
+    My_LeftAlt,  My_RightShift, Key_Spacebar, My_RightCtrl, \
+    My_Fn \
 )
 
 const Key keymaps[][ROWS][COLS] PROGMEM = {
   TK_QWERTY,
   GENERIC_FN2,
-  NUMPAD
+  //NUMPAD
 };
 
 static LEDSolidColor solidRed(160, 0, 0);
@@ -132,9 +162,10 @@ static LEDSolidColor solidIndigo(0, 0, 170);
 static LEDSolidColor solidViolet(130, 0, 120);
 
 const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
+  /*
   if (macroIndex == TOGGLENUMLOCK && keyToggledOn(keyState)) {
     return NumLock.toggle();
-  } else if (macroIndex == 1 && keyToggledOn(keyState)) {
+  } else */ if (macroIndex == 1 && keyToggledOn(keyState)) {
     Macros.type(PSTR("Keyboardio Model 01 - Kaleidoscope "));
     Macros.type(PSTR(BUILD_INFORMATION));
   } else if (macroIndex == MACRO_ANY) {
@@ -151,26 +182,51 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
 void setup() {
   Kaleidoscope.setup(KEYMAP_SIZE);
   BootKeyboard.begin();
-  Kaleidoscope.use(&TestMode,
+  Kaleidoscope.use(//&TestMode,
                    &LEDControl, &LEDOff,
+                   &WavepoolEffect,
                    &LEDRainbowEffect, &LEDRainbowWaveEffect, &LEDChaseEffect,
                    &solidRed, &solidOrange, &solidYellow, &solidGreen, &solidBlue, &solidIndigo, &solidViolet,
                    &LEDBreatheEffect,
-                   &AlphaSquareEffect,
+                   //&AlphaSquareEffect,
                    &StalkerEffect,
-                   &NumLock,
+                   //&NumLock,
 
-                   &Macros,
                    &MouseKeys,
+                   #ifdef USE_ONESHOT
+                   &OneShot,
+                   &ActiveModColorEffect,
+                   #endif
                    NULL);
 
-  NumLock.numPadLayer = NUMPAD_KEYMAP;
-  AlphaSquare.color = { 255, 0, 0 };
+  //Layer.repeat_first_press = true;
+
+  /*
+  MouseKeys.speed = 1;         // pixels per frame
+  MouseKeys.speedDelay = 1;    // ms per frame
+  MouseKeys.accelSpeed = 1;    // increase in pixels per accel step
+  MouseKeys.accelDelay = 64;  // ms per accel step
+  */
+  MouseWrapper.speedLimit = 250;  // max pixels per speedDelay
+  MouseKeys.wheelSpeed = 1;    // scroll ticks per step
+  MouseKeys.wheelDelay = 64;   // ms per scroll step
+
+  //NumLock.numPadLayer = NUMPAD_KEYMAP;
+  //AlphaSquare.color = { 255, 0, 0 };
   LEDRainbowEffect.brightness(100);
   LEDRainbowWaveEffect.brightness(100);
   StalkerEffect.variant = STALKER(BlazingTrail);
+
+  #ifdef USE_ONESHOT
+  ActiveModColorEffect.highlight_color = CRGB(0xff, 0xff, 0xff);
+  OneShot.time_out = 3000;  // 3s timeout for the OneShot effect
+  OneShot.hold_time_out = 500;  // don't oneshot if held longer than 500ms
+  #endif
+
   //LEDOff.activate();
-  LEDRainbowWaveEffect.activate();
+  //LEDRainbowWaveEffect.activate();
+  WavepoolEffect.idle_timeout = 5000;
+  WavepoolEffect.activate();
 }
 
 
