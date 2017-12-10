@@ -69,8 +69,6 @@
 // make the shift keys double as paren keys
 #include "Kaleidoscope-SpaceCadet.h"
 
-//#include "kaleidoscope/hid.h"
-
 #ifdef USE_ONESHOT
 #include "Kaleidoscope-OneShot.h"
 #include "Kaleidoscope-LED-ActiveModColor.h"
@@ -93,10 +91,6 @@
   * a macro key is pressed.
   */
 
-//#define MACRO_VERSION_INFO 1
-//#define Macro_VersionInfo M(MACRO_VERSION_INFO)
-//#define MACRO_ANY 2
-////#define NUMPAD_KEYMAP 2
 enum { MACRO_VERSION_INFO,
        MACRO_ANY
      };
@@ -152,39 +146,6 @@ enum { MACRO_VERSION_INFO,
  *   so we can make the keymaps actually resemble the physical key layout better
  */
 // *INDENT-OFF*
-
-/*
-#define GENERIC_FN2  KEYMAP_STACKED ( \
-___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           XXX,         \
-Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE, \
-Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR, Key_mouseBtnL, Key_mouseWarpNW,                   \
-Key_End,  Key_PrintScreen,  Key_Insert,  ___,        Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE, \
-                                            Key_LeftControl, Key_Delete, Key_LeftGui, Key_LeftShift,  \
-                                                                ___,   \
-\
-Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                  Key_F9,          Key_F10,          Key_F11, \
-Consumer_PlaySlashPause,    Consumer_ScanNextTrack, Key_LeftCurlyBracket,     Key_RightCurlyBracket,   Key_LeftBracket, Key_RightBracket, Key_F12, \
-                            Key_LeftArrow,          Key_DownArrow,            Key_UpArrow,             Key_RightArrow,  ___,              ___, \
-Key_Menu,                   Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,            Key_Backslash,    Key_Pipe, \
-Key_RightShift, Key_RightAlt, Key_Enter, Key_RightControl, \
-___ \
-)
-*/
-#define GENERIC_FN2  KEYMAP_STACKED ( \
-Key_Backslash,Key_F1,    Key_F2,            Key_F3,       Key_F4,            Key_F5,           XXX, \
-Key_Tab,      ___,       Key_mouseScrollUp, Key_mouseUp,  Key_mouseScrollDn, ___,              ___, \
-Key_Home,     ___,       Key_mouseL,        Key_mouseDn,  Key_mouseR,        ___,                   \
-Key_End,      ___,       Key_mouseBtnL,     Key_mouseBtnM,Key_mouseBtnR,     ___,              ___, \
-                                            ___, Key_Delete, ___, ___,  \
-                                                                ___,   \
-\
-___,            Key_F6,                 Key_F7,                   Key_F8,                  Key_F9,          Key_F10,          Key_F11, \
-___,            ___,                    ___,                      Key_UpArrow,             ___,             ___,              Key_RightBracket, \
-                ___,                    Key_LeftArrow,            Key_DownArrow,           Key_RightArrow,  ___,              Key_Enter, \
-Key_Menu,       ___,                    ___,                      ___,                     ___,             ___,              ___, \
-___, ___, ___, ___, \
-___ \
-)
 
 #if 0
 const Key keymaps[][ROWS][COLS] PROGMEM = {
@@ -269,6 +230,8 @@ enum { TK_QWERTY, FUNCTION }; // layers
 
 const Key keymaps[][ROWS][COLS] PROGMEM = {
 
+  // Qwerty here, but intended to be mapped to dvorak on the host computer
+  // (so other keyboards can be used too, with the same host mapping)
   [TK_QWERTY] = KEYMAP_STACKED
   (
     Key_Escape,   Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext,
@@ -306,66 +269,6 @@ const Key keymaps[][ROWS][COLS] PROGMEM = {
 
 };
 
-/*
-#define NUMPAD KEYMAP_STACKED  (\
-    ___, ___, ___, ___, ___, ___, ___,  \
-    ___, ___, ___, ___, ___, ___, ___,  \
-    ___, ___, ___, ___, ___, ___,       \
-    ___, ___, ___, ___, ___, ___, ___,  \
-               ___, ___, ___, ___,  \
-                 Key_Keymap1_Momentary, \
-\
-\
-    Macro_VersionInfo,  ___, Key_Keypad7, Key_Keypad8,   Key_Keypad9,        Key_KeypadSubtract, ___, \
-    ___, ___, Key_Keypad4, Key_Keypad5,   Key_Keypad6,        Key_KeypadAdd,      ___, \
-         ___, Key_Keypad1, Key_Keypad2,   Key_Keypad3,        Key_Equals,         Key_Quote, \
-    ___, ___, Key_Keypad0, Key_KeypadDot, Key_KeypadMultiply, Key_KeypadDivide,   Key_Enter, \
-    ___, ___, ___, ___, \
-    Key_Keymap1_Momentary \
-)
-*/
-
-/*
-#define QWERTY KEYMAP_STACKED ( \
-    ___,          Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext, \
-    Key_Backtick, Key_Q, Key_W, Key_E, Key_R, Key_T, Key_Tab,           \
-    Key_PageUp,   Key_A, Key_S, Key_D, Key_F, Key_G,                    \
-    Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,        \
-    Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift,         \
-                          Key_KeymapNext_Momentary,     \
-\
-    Macro_Any,       Key_6, Key_7, Key_8,     Key_9,      Key_0,         Key_ToggleNumlock, \
-    Key_Enter,     Key_Y, Key_U, Key_I,     Key_O,      Key_P,         Key_Equals,       \
-                   Key_H, Key_J, Key_K,     Key_L,      Key_Semicolon, Key_Quote,       \
-    Key_RightAlt,  Key_N, Key_M, Key_Comma, Key_Period, Key_Slash,     Key_Minus,       \
-    Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl,                   \
-    Key_KeymapNext_Momentary \
-)
-*/
-
-#define TK_QWERTY KEYMAP_STACKED ( \
-    Key_Escape,   Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext, \
-    Key_Tab,      Key_Q, Key_W, Key_E, Key_R, Key_T, Key_Moon,          \
-    Key_PageUp,   Key_A, Key_S, Key_D, Key_F, Key_G,                    \
-    Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Insert,        \
-    My_LeftCtrl, Key_Backspace, My_LeftShift, My_LeftGui,         \
-    My_Fn, \
-\
-    Macro_Any,     Key_6, Key_7, Key_8,     Key_9,      Key_0,         Key_Backtick,      \
-    Key_Sun,       Key_Y, Key_U, Key_I,     Key_O,      Key_P,         Key_LeftBracket,   \
-                   Key_H, Key_J, Key_K,     Key_L,      Key_Semicolon, Key_Quote,         \
-    Key_Minus,     Key_N, Key_M, Key_Comma, Key_Period, Key_Slash,     Key_Equals,        \
-    My_LeftAlt,  My_RightShift, Key_Spacebar, My_RightCtrl, \
-    My_Fn \
-)
-
-/*
-const Key keymaps[][ROWS][COLS] PROGMEM = {
-  TK_QWERTY,
-  GENERIC_FN2,
-  //NUMPAD
-};
-*/
 
 /* Re-enable astyle's indent enforcement */
 // *INDENT-ON*
@@ -481,6 +384,7 @@ void setup() {
     // We start with the LED effect that turns off all the LEDs.
     &LEDOff,
 
+    // My favorite LED effect
     &WavepoolEffect,
 
     // The rainbow effect changes the color of all of the keyboard's keys at the same time
@@ -525,6 +429,8 @@ void setup() {
     #ifdef USE_TAPDANCE
     &TapDance,
     #endif
+
+    // make shift keys also function as paren keys
     &SpaceCadet,
     NULL);
 
@@ -547,6 +453,7 @@ void setup() {
 
   LEDRainbowEffect.brightness(100);
   LEDRainbowWaveEffect.brightness(100);
+
   // The LED Stalker mode has a few effects. The one we like is
   // called 'BlazingTrail'. For details on other options,
   // see https://github.com/keyboardio/Kaleidoscope-LED-Stalker
